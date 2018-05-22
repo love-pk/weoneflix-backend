@@ -1,0 +1,22 @@
+global.domain = {}
+
+domain.Comment = require("../application/models/Comment.js")
+domain.Address = require("../application/models/Address.js")
+domain.User = require("../application/models/User.js")
+domain.Video = require("../application/models/Video.js")
+domain.HeadBanner = require("../application/models/HeadBanner.js")
+domain.Channel = require("../application/models/Channel.js")
+domain.AuthenticationToken = require("../application/models/AuthenticationToken.js")
+domain.VerificationToken = require("../application/models/VerificationToken.js")
+domain.RegistrationToken = require("../application/models/RegistrationToken.js")
+domain.VideoRating = require("../application/models/VideoRating.js")
+domain.RevenueMargin = require("../application/models/RevenueMargin.js")
+domain.Activity = require("../application/models/Activity.js")
+domain.Role = require("../application/models/Role.js")
+domain.InvitationToken = require("../application/models/InvitationToken.js")
+domain.Advertisement = require("../application/models/Advertisement.js");
+domain.Report = require("../application/models/Reports.js");
+domain.AdTransactionHistory = require("../application/models/AdTransactionHistory.js");
+domain.CuePoints = require("../application/models/CuePoints.js");
+domain.Payment = require("../application/models/Payment.js");
+module.exports = domain

@@ -1,0 +1,142 @@
+/*
+ * This program includes all the function which are required to  initialize before the application start
+ * call all the function which are required to perform the require initialization before server will start
+ */
+
+var roleArray = require('./RoleJSON.js').RoleJson;
+var activityArray = require('./ActivityJSON.js').ActivityJson;
+
+function createRoles(next, results) {
+    var count = 0;
+    async.whilst(
+        function () {
+            return count < roleArray.length;
+        },
+        function (callback) {
+            domain.Role.findOneAndUpdate({
+                name: roleArray[count].name
+            }, roleArray[count], {
+                new: true,
+                upsert: true,
+                setDefaultsOnInsert: true
+            }, function (err, role) {
+                if (err) {
+                    Logger.error(err);
+                    callback(err, null);
+                } else {
+                    count++;
+                    callback(null, count);
+                }
+            });
+        },
+        function (err, data) {
+            if (err) {
+                next(err, null);
+            } else {
+                next(null, data);
+                Logger.info("Roles created successfully");
+            }
+        });
+}
+
+function createActivities(next, results) {
+    var count = 0;
+    async.whilst(
+        function () {
+            return count < activityArray.length;
+        },
+        function (callback) {
+            domain.Activity.findOneAndUpdate({
+                name: activityArray[count].name
+            }, activityArray[count], {
+                new: true,
+                upsert: true,
+                setDefaultsOnInsert: true
+            }, function (err, role) {
+                if (err) {
+                    Logger.error(err);
+                    callback(err, null);
+                } else {
+                    count++;
+                    callback(null, count);
+                }
+            });
+        },
+        function (err, data) {
+            if (err) {
+                next(err, null);
+            } else {
+                next(null, data);
+                Logger.info("Activities created successfully");
+            }
+        });
+}
+
+var initApp = function () {
+    async.auto({
+            createRoles: function (next, results) {
+                createRoles(next, results);
+            },
+            createActivities: function (next, results) {
+                createActivities(next, results);
+            },
+            createSuperAdmin: ['createActivities', 'createRoles', function (next, results) {
+                createSuperAdmin(next, results);
+            }]
+        },
+        function (err, results) {
+            if (err) {
+                Logger.error(err);
+            } else if (results.createSuperAdmin == true) {
+                bootApplication();
+            } else {
+                bootApplication();
+            }
+        });
+}
+
+function createSuperAdmin(next, results) {
+    var isSuccess = false;
+    var saltString = uuid.v1();
+    var password = crypto.createHmac('sha1', saltString).update("admin").digest('hex');
+    var superAdminUser = new domain.User({
+        firstName: 'Admin',
+        lastName: 'woohooflix',
+        email: 'admin@woohooflix.com',
+        salt: saltString,
+        password: password,
+        role: "Role_Site_Admin",
+        accountLocked: false,
+        isAccountActive: true,
+        DOB: '1980-01-01'
+    });
+    domain.User.findOne({
+        email: 'admin@woohooflix.com'
+    }, function (err, admin) {
+        Logger.info("Document:" + admin);
+        if (err) {
+            next(err, null);
+        } else if (!admin || admin == undefined || admin == null) {
+            superAdminUser.save(function (err, user) {
+                if (err) {
+                    Logger.error(err)
+                } else {
+                    isSuccess = true;
+                    next(null, isSuccess);
+                }
+            });
+        } else {
+            isSuccess = true;
+            next(null, isSuccess);
+        }
+    });
+}
+
+// code to start the server
+function bootApplication() {
+    app.listen(configurationHolder.config.port, function () {
+        console.log("Express server listening on port %d in %s mode", configurationHolder.config.port, app.settings.env);
+    });
+}
+
+module.exports.initApp = initApp;

@@ -1,0 +1,30 @@
+module.exports = function () {
+<<<<<<< HEAD
+=======
+
+>>>>>>> ca3dced949e40067c99d1d786ddcdeeb4c166f35
+    passport.use(new FacebookStrategy({
+        clientID: configurationHolder.config.fbclientID,
+        clientSecret: configurationHolder.config.fbclientSecret,
+        callbackURL: configurationHolder.config.fbcallbackURL,
+        profileFields: ['id', 'displayName', 'birthday', "first_name", "last_name", 'email']
+    }, function (accessToken, refreshToken, profile, done) {
+        profile.accessToken = accessToken;
+        process.nextTick(function () {
+            done(null, profile);
+        });
+    }));
+
+    passport.serializeUser(function (user, done) {
+        done(null, user);
+    });
+
+    passport.deserializeUser(function (obj, done) {
+        done(null, obj);
+    });
+
+<<<<<<< HEAD
+};
+=======
+};
+>>>>>>> ca3dced949e40067c99d1d786ddcdeeb4c166f35

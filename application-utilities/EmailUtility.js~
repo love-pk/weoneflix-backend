@@ -1,0 +1,38 @@
+var nodemailer = require('nodemailer');
+var smtpTransport = require('nodemailer-smtp-transport');
+
+console.log("------",configurationHolder.config);
+var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: "woohooflixapp@gmail.com",
+        pass: "woohooflixapp1!"
+    }
+});
+
+
+var transport = nodemailer.createTransport(smtpTransport({
+    service: 'gmail',
+    auth: {
+        user: 'woohooflixapp@gmail.com',
+        pass: 'woohooflixapp1!'
+    }
+}));
+
+
+module.exports.emailUtility = (function() {
+
+    var sendEmail = function (fromEmail, toEmail, subject, emailBody) {
+
+        transporter.sendMail({
+            from: fromEmail,
+            to: toEmail,
+            subject: subject,
+            text: emailBody
+        });
+    }
+    return {
+        sendEmail : sendEmail
+    }
+
+}) ();
